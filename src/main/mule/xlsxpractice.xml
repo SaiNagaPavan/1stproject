@@ -26,5 +26,6 @@ output application/dw
 payload.diffs map () -> $.actual]]]></file:content>
 		</file:write>
 		<logger level="INFO" doc:name="Logger" doc:id="92164417-1b1a-4329-8df8-e33979aa736b" message="testing github"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a5b87713-8c9a-454a-a4e0-52ff28b0060d" message='"second logger for pull request"'/>
 	</flow>
 </mule>
