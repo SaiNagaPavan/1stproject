@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="5a75b9de-bb0f-4e3f-b93b-80cd18df468f" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="connectingboxwithjwtFlow" doc:id="d840ea36-7875-42b0-ae85-2d7f40376253" >
+		<http:listener doc:name="Listener" doc:id="de619c01-4529-46dc-87f1-730dc83b180b" config-ref="HTTP_Listener_config" path="/jwt"/>
+		<ee:transform doc:name="Transform Message" doc:id="48f66ef6-9e85-4e19-aa96-31e79ad9a925" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+import java!com::apisero::Tokengeneration
+---
+{
+	token : Tokengeneration::name()
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="c9dc76e1-5df4-4661-8157-24aa05c3ca78" message="#[payload]"/>
+	</flow>
+	<flow name="connectingboxwithjwtFlow1" doc:id="519e6e91-82f7-4b20-9327-911732b1e371" >
+		<http:listener doc:name="Listener" doc:id="e3dbe3c7-6f0f-43aa-a63c-b7ac03171f9d" config-ref="HTTP_Listener_config" path="/csvfilediff"/>
+		<file:read doc:name="Read" doc:id="6bb9bfe1-3ede-454d-86a6-cb767634ebb5" path="C:\Users\DELL\Desktop\100 Sales Records1.csv" target="csvdata"/>
+		<ee:transform doc:name="Transform Message" doc:id="ae134554-94f6-4d45-953a-955f5543180e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+---
+vars.csvdata]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

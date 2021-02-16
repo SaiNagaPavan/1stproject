@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="xlsxpracticeFlow" doc:id="967475a4-6699-418f-aa15-4919092f0eb7" >
+		<http:listener doc:name="Listener" doc:id="f1bd950d-3969-451f-bbf9-cb12fee2b232" config-ref="HTTP_Listener_config" path="/xlsx"/>
+		<file:read doc:name="Read" doc:id="f2a6deac-ec2a-412a-b8d5-9f82ad80949a" path="D:\file_example_XLS_10.xls" target="file1"/>
+		<file:read doc:name="Read" doc:id="fb197af1-506d-4617-93d4-994f8c4bfdfc" path="D:\file_example_XLSX_50.xlsx" target="file2"/>
+		<ee:transform doc:name="Transform Message" doc:id="c9c5a873-341e-4e1b-b659-94b0dbc013ea" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/dw
+import diff from dw::util::Diff
+---
+diff(vars.file1,vars.file2)]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:write doc:name="Write" doc:id="41e15b62-5881-41f1-b1be-10c5ee1a229d" path="D:\ResultFile.xlsx">
+			<file:content ><![CDATA[#[%dw 2.0
+output application/dw
+---
+payload.diffs map () -> $.actual]]]></file:content>
+		</file:write>
+	</flow>
+</mule>

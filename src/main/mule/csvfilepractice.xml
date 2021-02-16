@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<file:config name="File_Config" doc:name="File Config" doc:id="9db6cf3d-753c-494a-8cec-09f74294f736" />
+	<file:config name="File_Config1" doc:name="File Config" doc:id="95be123a-1d55-49d1-b1d8-fbc33c29b006" />
+	<flow name="dw-streamingFlow" >
+  <http:listener doc:name="Listener" doc:id="db719546-ace0-4007-8257-dfe27741fc06" config-ref="HTTP_Listener_config" path="/csvplay"/>
+		<file:read
+     path="C:\Users\DELL\Downloads\100 Sales Records.csv"
+     config-ref="File_Config"
+     outputMimeType="application/csv; streaming=true; header=true"/>
+  <ee:transform doc:name="Transform Message" doc:id="9b782249-c985-4f82-be0b-72935dbc54c5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<file:read doc:name="Read" doc:id="0342caf9-c3e9-4427-9274-399b46525024" path="C:\Users\DELL\Desktop\100 Sales Records1.csv" target="secondfile"/>
+		<ee:transform doc:name="Transform Message" >
+    <ee:message >
+      <ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+//payload map ((row) -> {
+//zipcode: row.zip
+//})
+typeOf(vars.secondfile)]]></ee:set-payload>
+    </ee:message>
+  </ee:transform>
+  <file:write doc:name="Write"
+    config-ref="File_Config1"
+    path="/path/to/output/file/output.json"/>
+  <logger level="INFO" doc:name="Logger" message="#[payload]"/>
+</flow></mule>
