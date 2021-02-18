@@ -24,6 +24,7 @@ import java!com::apisero::Tokengeneration
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="c9dc76e1-5df4-4661-8157-24aa05c3ca78" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="8976bad8-f3e2-424d-9235-ba858a8bc3e6" message="vsdcvdscv"/>
 	</flow>
 	<flow name="connectingboxwithjwtFlow1" doc:id="519e6e91-82f7-4b20-9327-911732b1e371" >
 		<http:listener doc:name="Listener" doc:id="e3dbe3c7-6f0f-43aa-a63c-b7ac03171f9d" config-ref="HTTP_Listener_config" path="/csvfilediff"/>
